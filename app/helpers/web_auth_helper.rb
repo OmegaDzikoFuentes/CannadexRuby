@@ -1,0 +1,2 @@
+module WebAuthHelper
+end

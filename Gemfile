@@ -48,6 +48,7 @@ gem 'httparty' # HTTP requests for geocoding APIs
 gem 'jwt' # JWT tokens (if using instead of API tokens)
 gem 'rack-cors' # CORS support for API
 gem 'bootsnap', '>= 1.4.4', require: false # Faster boot times
+gem 'grover' # HTML to image conversion for digital cards
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
