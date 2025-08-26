@@ -1,4 +1,3 @@
-# db/migrate/004_create_strains.rb
 class CreateStrains < ActiveRecord::Migration[8.0]
   def change
     create_table :strains do |t|
@@ -29,7 +28,9 @@ class CreateStrains < ActiveRecord::Migration[8.0]
       t.timestamps null: false
     end
     
-    add_index :strains, :category_id
+    # Remove this line as it's automatically created by t.references
+    # add_index :strains, :category_id
+    
     add_index :strains, :name, unique: true
     add_index :strains, :verified
     add_index :strains, :encounters_count

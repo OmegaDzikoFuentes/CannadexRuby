@@ -1,5 +1,3 @@
-
-# db/migrate/013_create_activities.rb
 class CreateActivities < ActiveRecord::Migration[8.0]
   def change
     create_table :activities do |t|
@@ -13,7 +11,9 @@ class CreateActivities < ActiveRecord::Migration[8.0]
       t.timestamps null: false
     end
     
-    add_index :activities, :user_id
+    # Remove this line - the index is already created by t.references
+    # add_index :activities, :user_id
+    
     add_index :activities, [:trackable_type, :trackable_id]
     add_index :activities, :activity_type
     add_index :activities, :created_at

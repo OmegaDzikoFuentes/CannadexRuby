@@ -19,8 +19,12 @@ class CreateAchievements < ActiveRecord::Migration[8.0]
       t.timestamps null: false
     end
     
+    # Keep the composite index (this is not automatically created)
     add_index :achievements, [:user_id, :achievement_type], unique: true
-    add_index :achievements, :user_id
+    
+    # Remove this duplicate index (it's automatically created by t.references)
+    # add_index :achievements, :user_id
+    
     add_index :achievements, :is_unlocked
     add_index :achievements, :achievement_type
   end

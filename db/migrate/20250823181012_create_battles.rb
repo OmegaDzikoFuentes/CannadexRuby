@@ -15,9 +15,7 @@ class CreateBattles < ActiveRecord::Migration[8.0]
       t.timestamps null: false
     end
     
-    add_index :battles, :challenger_id
-    add_index :battles, :opponent_id
-    add_index :battles, :winner_id
+    
     add_index :battles, :status
     add_index :battles, :battled_at
     add_index :battles, :expires_at

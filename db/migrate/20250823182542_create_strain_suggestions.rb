@@ -16,9 +16,9 @@ class CreateStrainSuggestions < ActiveRecord::Migration[8.0]
       t.timestamps null: false
     end
     
-    add_index :strain_suggestions, :user_id
+
     add_index :strain_suggestions, :status
-    add_index :strain_suggestions, :reviewed_by_user_id
+
     add_index :strain_suggestions, :created_at
     
     # GIN indexes for array searches

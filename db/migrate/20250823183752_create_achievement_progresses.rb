@@ -8,7 +8,7 @@ class CreateAchievementProgresses < ActiveRecord::Migration[8.0]
       t.timestamps null: false
     end
     
-    add_index :achievement_progresses, :achievement_id
+
     add_index :achievement_progresses, :created_at
   end
 end

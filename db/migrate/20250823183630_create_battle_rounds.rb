@@ -12,7 +12,7 @@ class CreateBattleRounds < ActiveRecord::Migration[8.0]
       t.timestamps null: false
     end
     
-    add_index :battle_rounds, :battle_id
+
     add_index :battle_rounds, [:battle_id, :round_number], unique: true
     
     # Constraint: round_number must be 1, 2, or 3

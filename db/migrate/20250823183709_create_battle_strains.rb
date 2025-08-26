@@ -10,7 +10,7 @@ class CreateBattleStrains < ActiveRecord::Migration[8.0]
       t.timestamps null: false
     end
     
-    add_index :battle_strains, :battle_id
+
     add_index :battle_strains, [:battle_id, :user_id, :position], unique: true
     
     # Constraint: position must be 1, 2, or 3

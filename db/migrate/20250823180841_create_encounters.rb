@@ -1,5 +1,4 @@
-
-# Fix for db/migrate/005_create_encounters.rb - remove duplicate index
+# db/migrate/005_create_encounters.rb
 class CreateEncounters < ActiveRecord::Migration[8.0]
   def change
     create_table :encounters do |t|
@@ -40,9 +39,10 @@ class CreateEncounters < ActiveRecord::Migration[8.0]
       t.timestamps null: false
     end
     
-    add_index :encounters, :strain_id
-    add_index :encounters, [:user_id, :strain_id], unique: true, name: 'unique_user_strain_encounter'  # Only one unique index
-    add_index :encounters, :user_id
+    # REMOVED: add_index :encounters, :strain_id (duplicate of auto-created index)
+    # REMOVED: add_index :encounters, :user_id (duplicate of auto-created index)
+    
+    add_index :encounters, [:user_id, :strain_id], unique: true, name: 'unique_user_strain_encounter'
     add_index :encounters, :location, using: :gist
     add_index :encounters, :encountered_at
     add_index :encounters, :public

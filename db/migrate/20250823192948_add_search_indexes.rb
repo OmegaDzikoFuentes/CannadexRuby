@@ -2,9 +2,9 @@
 class AddSearchIndexes < ActiveRecord::Migration[8.0]
   def change
     # Text search indexes for better search performance
-    add_index :strains, :name, opclass: :gin_trgm_ops, using: :gin
+
     add_index :strains, :description, opclass: :gin_trgm_ops, using: :gin
-    add_index :users, :username, opclass: :gin_trgm_ops, using: :gin
+
     
     # Composite indexes for common queries
     add_index :encounters, [:user_id, :encountered_at]
