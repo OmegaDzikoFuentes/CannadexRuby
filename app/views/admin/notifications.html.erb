@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin - Notifications Management</title>
+  <!-- Same style -->
+</head>
+<body>
+  <div class="container">
+    <h1>Notifications Management</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>User</th>
+          <th>Type</th>
+          <th>Message</th>
+          <th>Read</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @notifications.each do |notification| %>
+          <tr>
+            <td><%= notification.id %></td>
+            <td><%= notification.user.username %></td>
+            <td><%= notification.notification_type %></td>
+            <td><%= notification.message.truncate(50) %></td>
+            <td><%= notification.read? ? 'Yes' : 'No' %></td>
+            <td>
+              <%= link_to 'View', admin_notification_path(notification), class: "action-btn" %>
+              <%= link_to 'Delete', admin_notification_path(notification), method: :delete, class: "action-btn delete-btn" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

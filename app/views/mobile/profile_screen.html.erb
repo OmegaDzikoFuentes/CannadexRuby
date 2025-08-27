@@ -1,0 +1,36 @@
+<!-- app/views/mobile/profile_screen.html.erb (Mobile profile mockup) -->
+<div class="mobile-screen" style="width: 375px; height: 812px; background: #121212; border-radius: 40px; overflow: hidden; position: relative; box-shadow: 0 0 40px rgba(0,0,0,0.5); margin: 40px auto;">
+  <!-- Status Bar -->
+  <div style="height: 44px; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; font-size: 14px;">
+    <span>9:41</span>
+    <span>📶 🔋</span>
+  </div>
+  
+  <!-- Profile Content -->
+  <div style="padding: 20px; text-align: center;">
+    <img src="avatar.png" alt="Profile" style="width: 120px; height: 120px; border-radius: 50%; border: 3px solid #4caf50; margin-bottom: 16px;">
+    <h1 style="font-size: 24px; color: #fff; margin: 0 0 8px;">@username</h1>
+    <p style="font-size: 16px; opacity: 0.8; margin: 0 0 24px;">Level <%= level %> • <%= xp %> XP</p>
+    
+    <div style="background: #1e1e1e; border-radius: 16px; padding: 16px; margin-bottom: 20px;">
+      <h2 style="font-size: 20px; margin: 0 0 12px;">Stats</h2>
+      <div style="display: flex; justify-content: space-around; text-align: center;">
+        <div>
+          <div style="font-size: 24px; color: #4caf50;"><%= total_encounters %></div>
+          <p>Encounters</p>
+        </div>
+        <div>
+          <div style="font-size: 24px; color: #4caf50;"><%= battles_won %></div>
+          <p>Battles Won</p>
+        </div>
+        <div>
+          <div style="font-size: 24px; color: #4caf50;"><%= unlocked_achievements %></div>
+          <p>Achievements</p>
+        </div>
+      </div>
+    </div>
+    
+    <button style="width: 100%; padding: 16px; background: #4caf50; color: #fff; border: none; border-radius: 12px; font-size: 18px; margin-bottom: 16px;">Edit Profile</button>
+    <button style="width: 100%; padding: 16px; background: #ffc107; color: #121212; border: none; border-radius: 12px; font-size: 18px;">View Achievements</button>
+  </div>
+</div>

@@ -1,0 +1,174 @@
+<!-- app/views/home/index.html.erb -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title><%= app_name %> - <%= tagline %></title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap');
+    
+    :root {
+      --primary: #4caf50;
+      --secondary: #2e5c3e;
+      --background: #121212;
+      --text: #ffffff;
+      --accent: #ffc107;
+    }
+    
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: var(--background);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+    
+    .hero {
+      height: 100vh;
+      background: linear-gradient(135deg, var(--secondary), var(--primary));
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+      animation: rotate 20s linear infinite;
+    }
+    
+    @keyframes rotate {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .glass-card {
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 24px;
+      margin: 16px;
+      box-shadow: 0 4px 30px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease;
+    }
+    
+    .glass-card:hover {
+      transform: translateY(-4px);
+    }
+    
+    .cta-button {
+      background: var(--accent);
+      color: var(--background);
+      padding: 12px 32px;
+      border-radius: 50px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+    
+    .cta-button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 20px var(--accent);
+    }
+    
+    section {
+      padding: 80px 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 32px;
+    }
+    
+    .stat {
+      text-align: center;
+      font-size: 48px;
+      font-weight: 900;
+      color: var(--primary);
+      margin: 16px 0;
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <% if banner_image %>
+      <img src="<%= banner_image %>" alt="Cannadex Banner" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.3;">
+    <% end %>
+    <h1 style="font-size: 64px; font-weight: 900; margin: 0 0 16px; text-shadow: 0 4px 8px rgba(0,0,0,0.3);"><%= app_name %></h1>
+    <p style="font-size: 24px; max-width: 600px; margin: 0 0 32px; opacity: 0.9;"><%= tagline %></p>
+    <a href="/signup" class="cta-button">Get Started Free</a>
+  </header>
+  
+  <section id="features">
+    <h2 style="text-align: center; font-size: 40px; margin-bottom: 48px;">Why Choose Cannadex?</h2>
+    <div class="features-grid">
+      <div class="glass-card">
+        <h3 style="font-size: 24px; margin: 0 0 16px;">Digital Rolodex</h3>
+        <p>Catalog your cannabis encounters with photos, ratings, and detailed notes.</p>
+      </div>
+      <div class="glass-card">
+        <h3 style="font-size: 24px; margin: 0 0 16px;">Sesh Pals Network</h3>
+        <p>Connect with friends, share experiences, and build your community.</p>
+      </div>
+      <div class="glass-card">
+        <h3 style="font-size: 24px; margin: 0 0 16px;">Battle Mode</h3>
+        <p>Challenge pals to strain battles and climb the leaderboards.</p>
+      </div>
+      <div class="glass-card">
+        <h3 style="font-size: 24px; margin: 0 0 16px;">Achievement System</h3>
+        <p>Earn trophies for discoveries, battles won, and exploration.</p>
+      </div>
+    </div>
+  </section>
+  
+  <section style="background: linear-gradient(to right, var(--secondary), var(--primary));">
+    <h2 style="text-align: center; font-size: 40px; margin-bottom: 48px;">Join Thousands of Enthusiasts</h2>
+    <div style="display: flex; justify-content: space-around; flex-wrap: wrap;">
+      <div>
+        <div class="stat">10K+</div>
+        <p>Active Users</p>
+      </div>
+      <div>
+        <div class="stat">50K+</div>
+        <p>Strains Cataloged</p>
+      </div>
+      <div>
+        <div class="stat">100K+</div>
+        <p>Battles Fought</p>
+      </div>
+    </div>
+  </section>
+  
+  <footer style="padding: 40px 20px; text-align: center; background: #0a1a10;">
+    <p>&copy; <%= Time.current.year %> Cannadex. All rights reserved.</p>
+    <a href="/privacy" style="color: var(--text); opacity: 0.7; margin: 0 16px; text-decoration: none;">Privacy Policy</a>
+    <a href="/terms" style="color: var(--text); opacity: 0.7; margin: 0 16px; text-decoration: none;">Terms of Service</a>
+  </footer>
+  <script>
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      document.querySelector(this.getAttribute('href')).scrollIntoView({
+        behavior: 'smooth'
+      });
+    });
+  });
+</script>
+</body>
+</html>

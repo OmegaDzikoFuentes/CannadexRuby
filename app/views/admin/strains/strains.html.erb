@@ -1,0 +1,47 @@
+<!-- app/views/admin/strains.html.erb (Admin strains management) -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Strains Management</title>
+  <style>
+    body { background: #121212; color: #fff; font-family: 'Inter', sans-serif; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 12px; text-align: left; border-bottom: 1px solid #2a2a2a; }
+    th { background: #1e1e1e; }
+    .action-btn { background: #4caf50; color: #fff; padding: 6px 12px; border-radius: 6px; text-decoration: none; }
+    .verify-btn { background: #2196f3; }
+  </style>
+</head>
+<body>
+  <div class="container" style="max-width: 1200px; margin: 40px auto; padding: 20px;">
+    <h1>Strains Management</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Category</th>
+          <th>Avg Rating</th>
+          <th>Verified</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+  <% @strains.each do |strain| %>
+    <tr>
+      <td><%= strain.name %></td>
+      <td><%= strain.category.name %></td>
+      <td><%= strain.average_overall_rating %>/10</td>
+      <td><%= strain.verified? ? 'Yes' : 'No' %></td>
+      <td>
+        <%= link_to 'Edit', edit_admin_strain_path(strain), class: "action-btn" %>
+        <%= link_to 'Verify', verify_admin_strain_path(strain), method: :patch, class: "action-btn verify-btn" if !strain.verified? %>
+      </td>
+    </tr>
+  <% end %>
+</tbody>
+    </table>
+  </div>
+</body>
+</html>

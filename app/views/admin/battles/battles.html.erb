@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin - Battles Management</title>
+  <!-- Same style as users -->
+</head>
+<body>
+  <div class="container">
+    <h1>Battles Management</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Challenger</th>
+          <th>Opponent</th>
+          <th>Status</th>
+          <th>Winner</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @battles.each do |battle| %>
+          <tr>
+            <td><%= battle.id %></td>
+            <td><%= battle.challenger.username %></td>
+            <td><%= battle.opponent.username %></td>
+            <td><%= battle.status.capitalize %></td>
+            <td><%= battle.winner&.username || 'Pending' %></td>
+            <td>
+              <%= link_to 'View', admin_battle_path(battle), class: "action-btn" %>
+              <%= link_to 'Cancel', cancel_admin_battle_path(battle), method: :patch, class: "action-btn delete-btn" if battle.pending? %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

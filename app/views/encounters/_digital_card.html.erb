@@ -1,56 +1,87 @@
-<div style="width: 600px; height: 800px; background: linear-gradient(to bottom, #1a3a24, #2e5c3e); border: 4px solid #4caf50; border-radius: 20px; overflow: hidden; font-family: Arial, sans-serif; color: #ffffff; text-align: center; position: relative; box-shadow: 0 0 20px rgba(0,0,0,0.5);">
-  <!-- Background watermark -->
-  <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-45deg); font-size: 100px; opacity: 0.1; color: #ffffff;">Cannadex</div>
+<!-- app/views/encounters/digital_card.html.erb -->
+<div class="digital-card" style="width: 600px; height: 800px; background: linear-gradient(135deg, #1a3a24 0%, #2e5c3e 40%, #4caf50 100%); border-radius: 24px; overflow: hidden; position: relative; box-shadow: 0 8px 32px rgba(0,0,0,0.4); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #ffffff;">
+  <!-- Glassmorphism Overlay -->
+  <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border-radius: 24px; border: 1px solid rgba(255,255,255,0.1);"></div>
   
-  <!-- Header with Strain Name -->
-  <h1 style="margin: 20px 0; font-size: 36px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);"><%= encounter.strain.name %></h1>
+  <!-- Watermark -->
+  <div style="position: absolute; bottom: 40px; right: 40px; opacity: 0.15; transform: rotate(-30deg); font-size: 72px; font-weight: bold; text-shadow: 0 0 20px rgba(0,0,0,0.5);">CANNADEx</div>
   
-  <!-- Bud Photo -->
-  <% if encounter.photos.attached? %>
-    <img src="<%= rails_blob_url(encounter.photos.first, only_path: true) %>" alt="Bud Photo" style="width: 300px; height: 300px; object-fit: cover; border-radius: 50%; border: 4px solid #ffffff; margin-bottom: 20px;">
-  <% else %>
-    <img src="https://via.placeholder.com/300x300?text=No+Photo" alt="No Bud Photo" style="width: 300px; height: 300px; object-fit: cover; border-radius: 50%; border: 4px solid #ffffff; margin-bottom: 20px;">
-  <% end %>
+  <!-- Header Section -->
+  <div style="padding: 32px 24px 24px; text-align: center; position: relative; z-index: 1;">
+    <h1 style="font-size: 32px; font-weight: 700; margin: 0 0 8px; text-shadow: 0 2px 4px rgba(0,0,0,0.3); letter-spacing: 0.5px;"><%= encounter.strain.name.upcase %></h1>
+    <p style="font-size: 18px; opacity: 0.85; margin: 0; font-weight: 500;"><%= encounter.strain.category.name %> • <%= encounter.strain.genetics %></p>
+  </div>
   
-  <!-- Ratings Grid -->
-  <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 0 20px 20px; font-size: 18px;">
-    <div style="background: rgba(255,255,255,0.1); padding: 10px; border-radius: 10px;">
-      <strong>Taste:</strong> <%= encounter.taste_rating %>/10
-    </div>
-    <div style="background: rgba(255,255,255,0.1); padding: 10px; border-radius: 10px;">
-      <strong>Smell:</strong> <%= encounter.smell_rating %>/10
-    </div>
-    <div style="background: rgba(255,255,255,0.1); padding: 10px; border-radius: 10px;">
-      <strong>Texture:</strong> <%= encounter.texture_rating %>/10
-    </div>
-    <div style="background: rgba(255,255,255,0.1); padding: 10px; border-radius: 10px;">
-      <strong>Potency:</strong> <%= encounter.potency_rating %>/10
+  <!-- Image Section with Glass Frame -->
+  <div style="display: flex; justify-content: center; margin: 0 24px 24px; position: relative; z-index: 1;">
+    <div style="width: 320px; height: 320px; border-radius: 50%; overflow: hidden; border: 2px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); backdrop-filter: blur(5px); box-shadow: 0 4px 16px rgba(0,0,0,0.3);">
+      <% if encounter.photos.attached? %>
+        <img src="<%= rails_blob_url(encounter.photos.first, only_path: true) %>" alt="<%= encounter.strain.name %> Bud" style="width: 100%; height: 100%; object-fit: cover;">
+      <% else %>
+        <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 24px; opacity: 0.5;">No Photo</div>
+      <% end %>
     </div>
   </div>
   
-  <!-- Overall Rating -->
-  <p style="font-size: 24px; margin: 0 20px 10px; background: #4caf50; padding: 10px; border-radius: 10px;">
-    Overall: <%= encounter.overall_rating %>/10
-  </p>
-  
-  <!-- Description Snippet -->
-  <p style="margin: 0 20px 10px; font-size: 16px; font-style: italic;">
-    <%= encounter.description&.truncate(100) || 'No description provided' %>
-  </p>
-  
-  <!-- Experience Highlights -->
-  <p style="margin: 0 20px 10px; font-size: 16px;">
-    Experience: <%= encounter.experience&.truncate(80) || 'No experience noted' %>
-  </p>
-  
-  <!-- Location and Date -->
-  <div style="position: absolute; bottom: 20px; left: 20px; right: 20px; font-size: 14px; opacity: 0.8;">
-    <p>Encountered at: <%= encounter.location_name || 'Unknown Location' %></p>
-    <p>On: <%= encounter.encountered_at.strftime('%B %d, %Y') %></p>
+  <!-- Ratings Section with Badges -->
+  <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 0 24px 24px; position: relative; z-index: 1;">
+    <div style="background: rgba(255,255,255,0.1); border-radius: 12px; padding: 12px; text-align: center; backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.1);">
+      <div style="font-size: 14px; opacity: 0.85; margin-bottom: 4px;">Taste</div>
+      <div style="font-size: 24px; font-weight: 600;"><%= encounter.taste_rating %>/10</div>
+      <%= rating_badge(encounter.taste_rating) %>
+    </div>
+    <div style="background: rgba(255,255,255,0.1); border-radius: 12px; padding: 12px; text-align: center; backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.1);">
+      <div style="font-size: 14px; opacity: 0.85; margin-bottom: 4px;">Smell</div>
+      <div style="font-size: 24px; font-weight: 600;"><%= encounter.smell_rating %>/10</div>
+      <%= rating_badge(encounter.smell_rating) %>
+    </div>
+    <div style="background: rgba(255,255,255,0.1); border-radius: 12px; padding: 12px; text-align: center; backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.1);">
+      <div style="font-size: 14px; opacity: 0.85; margin-bottom: 4px;">Texture</div>
+      <div style="font-size: 24px; font-weight: 600;"><%= encounter.texture_rating %>/10</div>
+      <%= rating_badge(encounter.texture_rating) %>
+    </div>
+    <div style="background: rgba(255,255,255,0.1); border-radius: 12px; padding: 12px; text-align: center; backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.1);">
+      <div style="font-size: 14px; opacity: 0.85; margin-bottom: 4px;">Potency</div>
+      <div style="font-size: 24px; font-weight: 600;"><%= encounter.potency_rating %>/10</div>
+      <%= rating_badge(encounter.potency_rating) %>
+    </div>
+    <div style="background: rgba(255,255,255,0.1); border-radius: 12px; padding: 12px; text-align: center; backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.1); grid-column: span 2;">
+      <div style="font-size: 14px; opacity: 0.85; margin-bottom: 4px;">Overall</div>
+      <div style="font-size: 28px; font-weight: 700;"><%= encounter.overall_rating %>/10</div>
+      <%= rating_badge(encounter.overall_rating, size: 'large') %>
+    </div>
   </div>
   
-  <!-- Footer -->
-  <div style="position: absolute; bottom: 10px; right: 20px; font-size: 12px; opacity: 0.6;">
-    Generated by Cannadex
+  <!-- Description and Experience -->
+  <div style="margin: 0 24px 16px; position: relative; z-index: 1;">
+    <h2 style="font-size: 18px; font-weight: 600; margin: 0 0 8px; opacity: 0.9;">Description</h2>
+    <p style="font-size: 14px; line-height: 1.5; margin: 0; opacity: 0.85;"><%= encounter.description&.truncate(150) || 'No description provided.' %></p>
+  </div>
+  
+  <div style="margin: 0 24px 24px; position: relative; z-index: 1;">
+    <h2 style="font-size: 18px; font-weight: 600; margin: 0 0 8px; opacity: 0.9;">Experience</h2>
+    <p style="font-size: 14px; line-height: 1.5; margin: 0; opacity: 0.85;"><%= encounter.experience&.truncate(150) || 'No experience noted.' %></p>
+  </div>
+  
+  <!-- Footer with Metadata -->
+  <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 16px 24px; background: rgba(0,0,0,0.2); border-top: 1px solid rgba(255,255,255,0.1); font-size: 12px; opacity: 0.85; display: flex; justify-content: space-between; align-items: center;">
+    <div>
+      <p style="margin: 0;">Encountered: <%= encounter.encountered_at.strftime('%B %d, %Y') %></p>
+      <p style="margin: 0;">Location: <%= encounter.location_name || 'Unknown' %></p>
+    </div>
+    <div style="text-align: right;">
+      <p style="margin: 0;">Source: <%= encounter.source_name || 'Unknown' %></p>
+      <p style="margin: 0;">Price: <%= number_to_currency(encounter.price_paid) if encounter.price_paid %></p>
+    </div>
   </div>
 </div>
+
+<% def rating_badge(rating, size = 'small') %>
+  <% badge_style = size == 'large' ? 'padding: 6px 12px; font-size: 14px;' : 'padding: 4px 8px; font-size: 12px;' %>
+  <% color = rating >= 8 ? '#4caf50' : (rating >= 5 ? '#ffc107' : '#f44336') %>
+  <span style="<%= badge_style %> background: <%= color %>; border-radius: 20px; display: inline-block; margin-top: 4px; font-weight: 600;"><%= rating_badge_text(rating) %></span>
+<% end %>
+
+<% def rating_badge_text(rating) %>
+  <% if rating >= 9 %>Legendary<% elsif rating >= 8 %>Premium<% elsif rating >= 7 %>Excellent<% elsif rating >= 6 %>Good<% elsif rating >= 5 %>Average<% else %>Poor<% end %>
+<% end %>

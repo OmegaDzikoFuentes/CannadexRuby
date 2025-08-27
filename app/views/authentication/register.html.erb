@@ -1,0 +1,30 @@
+<!-- app/views/auth/register.html.erb -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register for Cannadex</title>
+  <style>
+    body { background: #121212; color: #fff; font-family: Arial, sans-serif; }
+    .form-container { max-width: 400px; margin: 100px auto; padding: 20px; background: #1e1e1e; border-radius: 8px; }
+    input { width: 100%; margin: 10px 0; padding: 10px; background: #2a2a2a; border: none; color: #fff; }
+    button { width: 100%; padding: 10px; background: #4caf50; border: none; color: #fff; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h2>Register</h2>
+    <%= form_with model: @user, url: perform_register_auth_path do |f| %>
+      <%= f.text_field :first_name, placeholder: "First Name" %>
+      <%= f.text_field :last_name, placeholder: "Last Name" %>
+      <%= f.text_field :username, placeholder: "Username" %>
+      <%= f.email_field :email, placeholder: "Email" %>
+      <%= f.password_field :password, placeholder: "Password" %>
+      <%= f.password_field :password_confirmation, placeholder: "Confirm Password" %>
+      <%= f.date_field :date_of_birth, placeholder: "Date of Birth" %>
+      <%= f.submit "Register" %>
+    <% end %>
+  </div>
+</body>
+</html>
