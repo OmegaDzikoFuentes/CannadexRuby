@@ -153,5 +153,7 @@ Rails.application.routes.draw do
   # Health check
   get 'health', to: 'health#check'
   get '/mobile/home', to: 'mobile#home_screen'
-  root 'health#check'
+  root 'home#index'
+  get 'health', to: 'health#check'
+  get '/battle', to: 'battles#index'
 end

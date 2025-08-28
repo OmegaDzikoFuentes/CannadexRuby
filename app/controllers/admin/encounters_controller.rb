@@ -1,5 +1,6 @@
 # app/controllers/admin/encounters_controller.rb
 class Admin::EncountersController < Admin::ApplicationController
+    load_and_authorize_resource
     def index
       encounters = Encounter.includes(:user, :strain)
                            .order(created_at: :desc)

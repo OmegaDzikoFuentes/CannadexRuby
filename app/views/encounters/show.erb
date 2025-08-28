@@ -1,0 +1,41 @@
+<h1 class="mb-4 cannabis-leaf">Encounter Details</h1>
+<div class="row">
+  <div class="col-md-6">
+    <div class="card mb-4">
+      <div class="card-header">Strain Info</div>
+      <div class="card-body">
+        <p><strong>Name:</strong> <%= @encounter.strain.name %></p>
+        <p><strong>Category:</strong> <%= @encounter.strain.category.name %></p>
+        <p><strong>Genetics:</strong> <%= @encounter.strain.genetics || 'N/A' %></p>
+        <p><strong>Average Community Rating:</strong> <%= @encounter.strain.average_overall_rating %> / 10</p>
+      </div>
+    </div>
+    <div class="card mb-4">
+      <div class="card-header">Your Ratings</div>
+      <div class="card-body">
+        <p><strong>Overall:</strong> <%= @encounter.overall_rating %> / 10</p>
+        <p><strong>Potency:</strong> <%= @encounter.potency_rating %> / 10</p>
+        <p><strong>Taste:</strong> <%= @encounter.taste_rating %> / 10</p>
+        <p><strong>Smell:</strong> <%= @encounter.smell_rating %> / 10</p>
+        <p><strong>Texture:</strong> <%= @encounter.texture_rating %> / 10</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <% if @encounter.card_generated %>
+      <img src="<%= @encounter.card_image_url %>" alt="Digital Card" class="img-fluid rounded shadow mb-4">
+    <% else %>
+      <p class="alert alert-info">Digital card is being generated...</p>
+    <% end %>
+    <div class="card">
+      <div class="card-header">Experience</div>
+      <div class="card-body">
+        <p><strong>Description:</strong> <%= @encounter.description || 'N/A' %></p>
+        <p><strong>Effects:</strong> <%= @encounter.effects_experienced.join(', ') %></p>
+        <p><strong>Location:</strong> <%= @encounter.location_name || 'N/A' %></p>
+        <p><strong>Source:</strong> <%= @encounter.source_type %> - <%= @encounter.source_name %></p>
+      </div>
+    </div>
+  </div>
+</div>
+<a href="/encounters" class="btn btn-secondary mt-3">Back to Encounters</a>

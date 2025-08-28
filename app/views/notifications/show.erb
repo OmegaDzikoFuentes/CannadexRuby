@@ -1,0 +1,13 @@
+<h1 class="mb-4 cannabis-leaf">Notification Details</h1>
+<div class="card">
+  <div class="card-body">
+    <p><strong>Type:</strong> <%= @notification.notification_type.capitalize %></p>
+    <p><strong>Message:</strong> <%= @notification.message %></p>
+    <p><strong>Created At:</strong> <%= @notification.created_at %></p>
+    <p><strong>Read:</strong> <%= @notification.read? ? 'Yes' : 'No' %></p>
+    <% if @notification.notifiable %>
+      <p><strong>Related:</strong> <%= @notification.notifiable.class.name %> #<%= @notification.notifiable.id %></p>
+    <% end %>
+  </div>
+</div>
+<a href="/notifications" class="btn btn-secondary mt-3">Back to Notifications</a>

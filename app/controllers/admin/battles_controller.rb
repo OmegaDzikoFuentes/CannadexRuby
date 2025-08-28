@@ -1,5 +1,6 @@
 # app/controllers/admin/battles_controller.rb
 class Admin::BattlesController < Admin::ApplicationController
+    load_and_authorize_resource
     def index
       battles = Battle.includes(:challenger, :opponent, :winner)
                      .order(created_at: :desc)

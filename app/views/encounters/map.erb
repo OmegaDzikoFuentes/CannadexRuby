@@ -1,0 +1,20 @@
+<h1 class="mb-4 cannabis-leaf">Encounter Map</h1>
+<div class="alert alert-info">Interactive map of your encounters (using Leaflet.js for responsive display).</div>
+<div id="map" style="height: 500px; width: 100%;" class="mb-4 border rounded"></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script>
+  var map = L.map('map').setView([0, 0], 2);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(map);
+  <% @encounters.each do |e| %>
+    <% if e.location %>
+      L.marker([<%= e.location.lat %>, <%= e.location.lon %>]).addTo(map)
+        .bindPopup('<b><%= e.strain.name %></b><br>Rating: <%= e.overall_rating %><br>Date: <%= e.encountered_at %>');
+    <% end %>
+  <% end %>
+  // Auto-fit bounds if locations exist
+  if (map.getBounds().isValid()) map.fitBounds(map.getBounds());
+</script>
+<a href="/encounters" class="btn btn-secondary">Back to Encounters</a>

@@ -1,5 +1,6 @@
 # app/controllers/admin/users_controller.rb
 class Admin::UsersController < Admin::ApplicationController
+    load_and_authorize_resource
     before_action :find_user, only: [:show, :update, :destroy, :toggle_admin, :verify_age]
     
     def index

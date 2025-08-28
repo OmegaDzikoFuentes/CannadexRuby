@@ -1,5 +1,7 @@
 # app/controllers/admin/analytics_controller.rb
 class Admin::AnalyticsController < Admin::ApplicationController
+    load_and_authorize_resource
+    
     def dashboard
       stats = {
         users: user_analytics,

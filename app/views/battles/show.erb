@@ -1,0 +1,39 @@
+<h1 class="mb-4 cannabis-leaf">Battle Details</h1>
+<div class="row">
+  <div class="col-md-6">
+    <div class="card mb-4">
+      <div class="card-header">Battle Info</div>
+      <div class="card-body">
+        <p><strong>Status:</strong> <%= @battle.status.capitalize %></p>
+        <p><strong>Challenger:</strong> <%= @battle.challenger.username %> (Level <%= @battle.challenger.level %>)</p>
+        <p><strong>Opponent:</strong> <%= @battle.opponent.username %> (Level <%= @battle.opponent.level %>)</p>
+        <p><strong>Score:</strong> <%= @battle.challenger_score %> - <%= @battle.opponent_score %></p>
+        <p><strong>Winner:</strong> <%= @battle.winner ? @battle.winner.username : 'N/A' %></p>
+        <p><strong>Battled At:</strong> <%= @battle.battled_at ? @battle.battled_at : 'Pending' %></p>
+        <p><strong>Expires At:</strong> <%= @battle.expires_at %></p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header">Rounds</div>
+      <div class="card-body">
+        <% if @battle.battle_rounds.any? %>
+          <ul class="list-group">
+            <% @battle.battle_rounds.each do |round| %>
+              <li class="list-group-item">
+                <strong>Round <%= round.round_number %>:</strong><br>
+                Challenger Strain: <%= round.challenger_strain.name %><br>
+                Opponent Strain: <%= round.opponent_strain.name %><br>
+                Winner: <%= round.winner_strain ? round.winner_strain.name : 'Tie' %>
+              </li>
+            <% end %>
+          </ul>
+        <% else %>
+          <p>No rounds yet. Accept the battle to start!</p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+<a href="/battles" class="btn btn-secondary mt-3">Back to Battles</a>

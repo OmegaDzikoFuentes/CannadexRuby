@@ -1,0 +1,11 @@
+<h1 class="mb-4 cannabis-leaf">Current Notifications</h1>
+<p><strong>Total Unread:</strong> <%= current_user.notifications.unread.count %></p>
+<ul class="list-group">
+  <% @current_notifications.each do |notification| %>
+    <li class="list-group-item list-group-item-info">
+      <span class="fw-bold"><%= notification.notification_type.capitalize %></span>: <%= notification.message %><br>
+      <small><%= time_ago_in_words(notification.created_at) %> ago</small>
+    </li>
+  <% end %>
+</ul>
+<a href="/notifications" class="btn btn-primary mt-3">View All</a>

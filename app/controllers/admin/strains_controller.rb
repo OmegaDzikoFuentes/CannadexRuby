@@ -1,5 +1,6 @@
 # app/controllers/admin/strains_controller.rb
 class Admin::StrainsController < Admin::ApplicationController
+    load_and_authorize_resource
     before_action :find_strain, only: [:show, :update, :destroy, :verify, :toggle_active]
     
     def index

@@ -1,30 +1,17 @@
-<!-- app/views/notifications/index.html.erb (Web notifications page) -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Notifications - Cannadex</title>
-  <style>
-    body { background: #121212; color: #fff; font-family: 'Inter', sans-serif; }
-    .notification { background: #1e1e1e; padding: 16px; border-radius: 12px; margin-bottom: 16px; }
-    .unread { border-left: 4px solid #4caf50; }
-  </style>
-</head>
-<body>
-  <div class="container" style="max-width: 800px; margin: 40px auto; padding: 20px;">
-    <h1>Your Notifications</h1>
-    <button style="background: #4caf50; color: #fff; padding: 12px 24px; border-radius: 8px; border: none; margin-bottom: 24px;">Mark All Read</button>
-    
-    <!-- Dynamic notifications loop -->
-    <div class="notification unread">
-      <p>New battle challenge from @friend</p>
-      <span style="font-size: 12px; opacity: 0.7;">2 minutes ago</span>
-    </div>
-    <div class="notification">
-      <p>Achievement unlocked: Explorer</p>
-      <span style="font-size: 12px; opacity: 0.7;">1 hour ago</span>
-    </div>
+<h1 class="mb-4 cannabis-leaf">Notifications</h1>
+<div class="row">
+  <div class="col">
+    <p><strong>Unread Count:</strong> <%= current_user.notifications.unread.count %></p>
+    <a href="/notifications/mark_all_read" class="btn btn-secondary mb-3" data-turbo-method="put">Mark All as Read</a>
+    <ul class="list-group">
+      <% @notifications.each do |notification| %>
+        <li class="list-group-item <%= notification.read? ? '' : 'list-group-item-info' %>">
+          <span class="fw-bold"><%= notification.notification_type.capitalize %></span>: <%= notification.message %><br>
+          <small><%= time_ago_in_words(notification.created_at) %> ago</small>
+          <a href="/notifications/<%= notification.id %>" class="btn btn-sm btn-info float-end">View</a>
+        </li>
+      <% end %>
+    </ul>
+    <%= paginate @notifications %>
   </div>
-</body>
-</html>
+</div>

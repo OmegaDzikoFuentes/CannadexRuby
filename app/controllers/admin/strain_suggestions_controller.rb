@@ -1,5 +1,6 @@
 # app/controllers/admin/strain_suggestions_controller.rb
 class Admin::StrainSuggestionsController < Admin::ApplicationController
+    load_and_authorize_resource
     before_action :find_suggestion, only: [:show, :approve, :reject]
     
     def index
