@@ -39,7 +39,7 @@ gem "thruster", require: false
 gem "image_processing", "~> 1.2"
 
 # Gemfile additions for Cannadex
-gem 'pg', '~> 1.1' # PostgreSQL (replaces sqlite3)
+gem 'pg', '~> 1.6' # PostgreSQL (replaces sqlite3)
 gem 'activerecord-postgis-adapter' # PostGIS support
 gem 'rgeo-geojson' # GeoJSON support
 gem 'kaminari' # Pagination
