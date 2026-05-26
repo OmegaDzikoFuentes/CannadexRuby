@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_28_175623) do
+ActiveRecord::Schema[8.0].define(version: 2026_05_09_061723) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -49,6 +49,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_28_175623) do
     t.index ["achievement_type"], name: "index_achievements_on_achievement_type"
     t.index ["is_unlocked"], name: "index_achievements_on_is_unlocked"
     t.index ["user_id", "achievement_type"], name: "index_achievements_on_user_id_and_achievement_type", unique: true
+    t.index ["user_id", "is_claimed"], name: "index_achievements_on_user_id_and_is_claimed"
     t.index ["user_id"], name: "index_achievements_on_user_id"
   end
 
@@ -57,12 +58,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_28_175623) do
     t.string "activity_type", null: false
     t.string "trackable_type", null: false
     t.bigint "trackable_id", null: false
-    t.text "data"
     t.boolean "public", default: true, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.jsonb "data", default: {}
     t.index ["activity_type"], name: "index_activities_on_activity_type"
     t.index ["created_at"], name: "index_activities_on_created_at"
+    t.index ["data"], name: "index_activities_on_data", using: :gin
     t.index ["public", "created_at"], name: "index_activities_on_public_and_created_at"
     t.index ["public"], name: "index_activities_on_public"
     t.index ["trackable_type", "trackable_id"], name: "index_activities_on_trackable_type_and_trackable_id"
@@ -101,9 +103,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_28_175623) do
     t.bigint "challenger_strain_id", null: false
     t.bigint "opponent_strain_id", null: false
     t.bigint "winner_strain_id"
-    t.text "round_results"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.jsonb "round_results", default: {}
     t.index ["battle_id", "round_number"], name: "index_battle_rounds_on_battle_id_and_round_number", unique: true
     t.index ["battle_id"], name: "index_battle_rounds_on_battle_id"
     t.index ["challenger_strain_id"], name: "index_battle_rounds_on_challenger_strain_id"
@@ -133,11 +135,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_28_175623) do
     t.bigint "winner_id"
     t.integer "challenger_score", default: 0, null: false
     t.integer "opponent_score", default: 0, null: false
-    t.text "battle_results"
     t.datetime "battled_at"
     t.datetime "expires_at", default: -> { "(CURRENT_TIMESTAMP + 'PT24H'::interval)" }, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.jsonb "battle_results", default: {}
     t.index ["battled_at"], name: "index_battles_on_battled_at"
     t.index ["challenger_id", "status"], name: "index_battles_on_challenger_id_and_status"
     t.index ["challenger_id"], name: "index_battles_on_challenger_id"
@@ -188,16 +190,20 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_28_175623) do
     t.boolean "card_generated", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "encounter_number", default: 1, null: false
     t.index ["card_generated"], name: "index_encounters_on_card_generated"
     t.index ["effects_experienced"], name: "index_encounters_on_effects_experienced", using: :gin
     t.index ["encountered_at"], name: "index_encounters_on_encountered_at"
     t.index ["location"], name: "index_encounters_on_location", using: :gist
+    t.index ["location_name"], name: "index_encounters_on_location_name"
     t.index ["public", "encountered_at"], name: "index_encounters_on_public_and_encountered_at"
     t.index ["public"], name: "index_encounters_on_public"
+    t.index ["source_type"], name: "index_encounters_on_source_type"
     t.index ["strain_id", "encountered_at"], name: "index_encounters_on_strain_id_and_encountered_at"
     t.index ["strain_id"], name: "index_encounters_on_strain_id"
     t.index ["user_id", "encountered_at"], name: "index_encounters_on_user_id_and_encountered_at"
-    t.index ["user_id", "strain_id"], name: "unique_user_strain_encounter", unique: true
+    t.index ["user_id", "strain_id", "encounter_number"], name: "index_encounters_on_user_strain_number"
+    t.index ["user_id", "strain_id"], name: "index_encounters_on_user_id_and_strain_id"
     t.index ["user_id"], name: "index_encounters_on_user_id"
     t.check_constraint "overall_rating >= 0 AND overall_rating <= 10", name: "valid_overall_rating"
     t.check_constraint "potency_rating >= 0 AND potency_rating <= 10", name: "valid_potency_rating"
@@ -223,6 +229,29 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_28_175623) do
     t.check_constraint "user_id <> friend_id", name: "prevent_self_friendship"
   end
 
+  create_table "notifications", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "notification_type", null: false
+    t.string "notifiable_type"
+    t.bigint "notifiable_id"
+    t.string "title", limit: 100, null: false
+    t.text "body"
+    t.jsonb "data", default: {}
+    t.boolean "read", default: false, null: false
+    t.boolean "sent_push", default: false, null: false
+    t.boolean "sent_email", default: false, null: false
+    t.datetime "read_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["data"], name: "index_notifications_on_data", using: :gin
+    t.index ["notifiable_type", "notifiable_id"], name: "index_notifications_on_notifiable"
+    t.index ["notification_type"], name: "index_notifications_on_notification_type"
+    t.index ["read"], name: "index_notifications_on_read"
+    t.index ["user_id", "created_at"], name: "index_notifications_on_user_id_and_created_at"
+    t.index ["user_id", "read"], name: "index_notifications_on_user_id_and_read"
+    t.index ["user_id"], name: "index_notifications_on_user_id"
+  end
+
   create_table "strain_suggestions", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.string "suggested_name", limit: 100, null: false
@@ -239,6 +268,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_28_175623) do
     t.index ["created_at"], name: "index_strain_suggestions_on_created_at"
     t.index ["effects"], name: "index_strain_suggestions_on_effects", using: :gin
     t.index ["flavors"], name: "index_strain_suggestions_on_flavors", using: :gin
+    t.index ["reviewed_at"], name: "index_strain_suggestions_on_reviewed_at"
     t.index ["reviewed_by_user_id"], name: "index_strain_suggestions_on_reviewed_by_user_id"
     t.index ["status"], name: "index_strain_suggestions_on_status"
     t.index ["user_id"], name: "index_strain_suggestions_on_user_id"
@@ -274,10 +304,55 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_28_175623) do
     t.index ["encounters_count"], name: "index_strains_on_encounters_count"
     t.index ["flavors"], name: "index_strains_on_flavors", using: :gin
     t.index ["name"], name: "index_strains_on_name", unique: true
+    t.index ["name"], name: "index_strains_on_name_trgm", opclass: :gin_trgm_ops, using: :gin
     t.index ["verified", "encounters_count"], name: "index_strains_on_verified_and_encounters_count"
     t.index ["verified"], name: "index_strains_on_verified"
     t.check_constraint "cbd_percentage >= 0::numeric AND cbd_percentage <= 100::numeric", name: "valid_cbd_percentage"
     t.check_constraint "thc_percentage >= 0::numeric AND thc_percentage <= 100::numeric", name: "valid_thc_percentage"
+  end
+
+  create_table "user_locations", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.geography "coordinates", limit: {:srid=>4326, :type=>"st_point", :geographic=>true}
+    t.string "city", limit: 100
+    t.string "state", limit: 50
+    t.string "country", limit: 50
+    t.datetime "located_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["coordinates"], name: "index_user_locations_on_coordinates", using: :gist
+    t.index ["user_id"], name: "index_user_locations_on_user_id", unique: true
+  end
+
+  create_table "user_preferences", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.boolean "email_notifications", default: true, null: false
+    t.boolean "push_notifications", default: true, null: false
+    t.boolean "friend_request_notifications", default: true, null: false
+    t.boolean "achievement_notifications", default: true, null: false
+    t.boolean "battle_notifications", default: true, null: false
+    t.boolean "profile_public", default: true, null: false
+    t.boolean "location_sharing_enabled", default: true, null: false
+    t.boolean "show_location_in_profile", default: false, null: false
+    t.boolean "discoverable_by_username", default: true, null: false
+    t.boolean "discoverable_by_location", default: true, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_user_preferences_on_user_id", unique: true
+  end
+
+  create_table "user_stats", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.integer "total_encounters", default: 0, null: false
+    t.integer "battles_won", default: 0, null: false
+    t.integer "battles_lost", default: 0, null: false
+    t.integer "level", default: 1, null: false
+    t.integer "experience_points", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["battles_won"], name: "index_user_stats_on_battles_won"
+    t.index ["level", "experience_points"], name: "index_user_stats_on_level_and_xp"
+    t.index ["user_id"], name: "index_user_stats_on_user_id", unique: true
   end
 
   create_table "users", force: :cascade do |t|
@@ -295,37 +370,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_28_175623) do
     t.date "date_of_birth", null: false
     t.boolean "age_verified", default: false, null: false
     t.datetime "age_verified_at"
-    t.boolean "profile_public", default: true, null: false
-    t.boolean "location_sharing_enabled", default: true, null: false
-    t.boolean "battle_notifications", default: true, null: false
-    t.integer "total_encounters", default: 0, null: false
-    t.integer "battles_won", default: 0, null: false
-    t.integer "battles_lost", default: 0, null: false
-    t.integer "level", default: 1, null: false
-    t.integer "experience_points", default: 0, null: false
-    t.geography "location", limit: {:srid=>4326, :type=>"st_point", :geographic=>true}
-    t.string "city", limit: 100
-    t.string "state", limit: 50
-    t.string "country", limit: 50
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.boolean "email_notifications", default: true, null: false
-    t.boolean "push_notifications", default: true, null: false
-    t.boolean "friend_request_notifications", default: true, null: false
-    t.boolean "achievement_notifications", default: true, null: false
-    t.boolean "show_location_in_profile", default: false, null: false
-    t.boolean "discoverable_by_username", default: true, null: false
-    t.boolean "discoverable_by_location", default: true, null: false
     t.index ["age_verified"], name: "index_users_on_age_verified"
     t.index ["api_token"], name: "index_users_on_api_token", unique: true
-    t.index ["battles_won"], name: "index_users_on_battles_won"
-    t.index ["discoverable_by_location"], name: "index_users_on_discoverable_by_location"
-    t.index ["discoverable_by_username"], name: "index_users_on_discoverable_by_username"
     t.index ["email"], name: "index_users_on_email", unique: true
-    t.index ["level", "experience_points"], name: "index_users_on_level_and_experience_points"
-    t.index ["location"], name: "index_users_on_location", using: :gist
-    t.index ["profile_public"], name: "index_users_on_profile_public"
     t.index ["username"], name: "index_users_on_username", unique: true
+    t.index ["username"], name: "index_users_on_username_trgm", opclass: :gin_trgm_ops, using: :gin
   end
 
   add_foreign_key "achievement_progresses", "achievements"
@@ -345,7 +396,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_28_175623) do
   add_foreign_key "encounters", "users"
   add_foreign_key "friendships", "users"
   add_foreign_key "friendships", "users", column: "friend_id"
+  add_foreign_key "notifications", "users"
   add_foreign_key "strain_suggestions", "users"
   add_foreign_key "strain_suggestions", "users", column: "reviewed_by_user_id"
   add_foreign_key "strains", "categories"
+  add_foreign_key "user_locations", "users"
+  add_foreign_key "user_preferences", "users"
+  add_foreign_key "user_stats", "users"
 end
