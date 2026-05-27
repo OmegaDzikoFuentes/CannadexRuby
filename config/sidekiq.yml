@@ -1,0 +1,38 @@
+# config/sidekiq.yml
+#
+# Queue priorities — higher weight = more workers assigned
+# ai_analysis is high priority (user is waiting for strain ID result)
+# default handles everything not otherwise assigned
+
+:concurrency: 10
+:timeout: 60
+
+:queues:
+  - [critical, 6]       # payment, auth, security
+  - [ai_analysis, 5]    # AnalyzePhotoJob — user-facing, keep fast
+  - [default, 3]        # general jobs
+  - [mailers, 2]        # ActionMailer
+  - [low, 1]            # cleanup, bulk jobs, scheduled tasks
+
+# Scheduled jobs (requires sidekiq-scheduler)
+:scheduler:
+  :rufus_scheduler_options:
+    :max_work_threads: 2
+
+  refresh_photo_urls:
+    cron: "0 */6 * * *"          # every 6 hours
+    class: RefreshPhotoUrlsJob
+    queue: low
+    description: "Refresh expiring S3 presigned URLs for all photos"
+
+  cleanup_failed_analyses:
+    cron: "0 2 * * *"            # 2am daily
+    class: CleanupFailedAnalysesJob
+    queue: low
+    description: "Retry retryable failed photo analyses"
+
+  cleanup_orphaned_s3_objects:
+    cron: "0 3 * * 0"            # 3am every Sunday
+    class: CleanupOrphanedS3Job
+    queue: low
+    description: "Remove S3 objects with no corresponding Photo record"

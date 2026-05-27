@@ -1,78 +1,111 @@
 source "https://rubygems.org"
-
-# Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
+ 
+# ── Rails core ────────────────────────────────────────────────────────────────
 gem "rails", "~> 8.0.2"
-# The modern asset pipeline for Rails [https://github.com/rails/propshaft]
-gem "propshaft"
-# Use the Puma web server [https://github.com/puma/puma]
-gem "puma", ">= 5.0"
-# Use JavaScript with ESM import maps [https://github.com/rails/importmap-rails]
+gem "propshaft"                          # Modern asset pipeline
+gem "puma", ">= 5.0"                     # Web server
+ 
+# ── Frontend ──────────────────────────────────────────────────────────────────
 gem "importmap-rails"
-# Hotwire's SPA-like page accelerator [https://turbo.hotwired.dev]
 gem "turbo-rails"
-gem 'hotwire-rails'
-# Hotwire's modest JavaScript framework [https://stimulus.hotwired.dev]
+gem "hotwire-rails"
 gem "stimulus-rails"
-# Build JSON APIs with ease [https://github.com/rails/jbuilder]
-gem "jbuilder"
-gem 'cancancan', '~> 3.6'
-gem 'bcrypt', '~> 3.1.7'
-
-# Windows does not include zoneinfo files, so bundle the tzinfo-data gem
-gem "tzinfo-data", platforms: %i[ windows jruby ]
-
-# Use the database-backed adapters for Rails.cache, Active Job, and Action Cable
-gem "solid_cache"
-gem "solid_queue"
-gem "solid_cable"
-
-# Reduces boot times through caching; required in config/boot.rb
-
-
-# Deploy this application anywhere as a Docker container [https://kamal-deploy.org]
-gem "kamal", require: false
-
-# Add HTTP asset caching/compression and X-Sendfile acceleration to Puma [https://github.com/basecamp/thruster/]
-gem "thruster", require: false
-
-# Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
-gem "image_processing", "~> 1.2"
-
-# Gemfile additions for Cannadex
-gem 'pg', '~> 1.1' # PostgreSQL (replaces sqlite3)
-gem 'activerecord-postgis-adapter' # PostGIS support
-gem 'rgeo-geojson' # GeoJSON support
-gem 'kaminari' # Pagination
-gem 'mini_magick' # Image processing for digital cards
-gem 'aws-sdk-s3' # AWS S3 file storage
-gem 'sidekiq' # Background jobs
-gem 'redis' # For Sidekiq and caching
-gem 'httparty' # HTTP requests for geocoding APIs
-gem 'jwt' # JWT tokens (if using instead of API tokens)
-gem 'rack-cors' # CORS support for API
-gem 'bootsnap', '>= 1.4.4', require: false # Faster boot times
-gem 'grover' # HTML to image conversion for digital cards
-
-
+gem "jbuilder"                           # JSON views
+ 
+# ── Database ──────────────────────────────────────────────────────────────────
+gem "pg", "~> 1.1"                       # PostgreSQL adapter
+gem "activerecord-postgis-adapter"       # PostGIS (geography columns, ST_DWithin, etc.)
+gem "rgeo-geojson"                       # GeoJSON support for location serialization
+ 
+# ── Auth & Security ───────────────────────────────────────────────────────────
+gem "bcrypt", "~> 3.1.7"                 # has_secure_password
+gem "cancancan", "~> 3.6"               # Authorization (Ability class)
+gem "jwt"                                # JWT tokens for API auth
+gem "rack-cors"                          # CORS headers for mobile API clients
+ 
+# ── File Storage — AWS S3 ─────────────────────────────────────────────────────
+gem "aws-sdk-s3", "~> 1.170"            # S3 client — S3Service + Active Storage
+gem "image_processing", "~> 1.2"        # Active Storage variants (avatars, strain images)
+gem "mini_magick", "~> 4.12"            # ImageMagick wrapper — resize, convert, HEIC→JPEG
+                                         # ⚠️  Requires imagemagick on the system:
+                                         #   macOS:  brew install imagemagick libheif
+                                         #   Ubuntu: apt-get install -y imagemagick libheif-dev
+gem "marcel", "~> 1.0"                  # MIME type detection (already a Rails transitive dep,
+                                         # pinning explicitly for S3Service content-type detection)
+gem "exifr", "~> 1.4"                   # EXIF extraction from JPEG/TIFF (GPS, device, capture time)
+ 
+# ── AI / Machine Learning ─────────────────────────────────────────────────────
+gem "ruby-openai", "~> 7.0"             # GPT-4o Vision — AiIdentificationService
+                                         # ⚠️  Set OPENAI_API_KEY in credentials:
+                                         #   rails credentials:edit → openai: { api_key: sk-... }
+ 
+# ── Background Jobs ───────────────────────────────────────────────────────────
+# IMPORTANT: You currently have solid_queue AND sidekiq.
+# solid_queue is Rails 8's built-in job backend (DB-backed, no Redis needed).
+# sidekiq is Redis-backed and better for high-throughput async work like AI analysis.
+#
+# Recommendation: use Sidekiq for the AI/photo pipeline (latency-sensitive),
+# keep solid_queue for everything else (mailers, achievements, card generation).
+# You can configure this per-queue in config/application.rb.
+# See: https://guides.rubyonrails.org/active_job_basics.html#multiple-backends
+#
+gem "sidekiq", "~> 7.3"                 # AI analysis queue (AnalyzePhotoJob)
+gem "sidekiq-scheduler", "~> 5.0"       # Cron jobs (URL refresh, cleanup, orphan detection)
+gem "redis", "~> 5.0"                   # Required by Sidekiq
+                                         # ⚠️  Set REDIS_URL in env or credentials
+ 
+# ── Rails 8 built-in backends (keep for non-AI jobs) ─────────────────────────
+gem "solid_queue"                        # Default ActiveJob backend (mailers, achievements)
+gem "solid_cache"                        # DB-backed Rails.cache
+gem "solid_cable"                        # DB-backed Action Cable
+ 
+# ── API & Networking ──────────────────────────────────────────────────────────
+gem "httparty"                           # HTTP client (geocoding APIs, external lookups)
+gem "kaminari"                           # Pagination for catalog/feed endpoints
+ 
+# ── Digital Card Generation ───────────────────────────────────────────────────
+gem "grover"                             # HTML → image/PDF via Puppeteer (encounter cards)
+                                         # ⚠️  Requires Node.js + puppeteer:
+                                         #   npm install puppeteer
+ 
+# ── Platform support ──────────────────────────────────────────────────────────
+gem "tzinfo-data", platforms: %i[windows jruby]
+gem "bootsnap", ">= 1.4.4", require: false  # Faster boot via caching
+ 
+# ── Deployment ────────────────────────────────────────────────────────────────
+gem "kamal", require: false              # Docker-based deployment
+gem "thruster", require: false           # HTTP caching + compression layer for Puma
+ 
+# ─────────────────────────────────────────────────────────────────────────────
 group :development, :test do
-  # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
-  gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
-
-  # Static analysis for security vulnerabilities [https://brakemanscanner.org/]
-  gem "brakeman", require: false
-
-  # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
+  gem "debug", platforms: %i[mri windows], require: "debug/prelude"
+  gem "brakeman", require: false         # Security static analysis
   gem "rubocop-rails-omakase", require: false
-
-  gem 'rspec-rails'
-  gem 'factory_bot_rails'
-  gem 'faker'
-  gem 'database_cleaner-active_record'
+ 
+  # Testing
+  gem "rspec-rails"
+  gem "factory_bot_rails"
+  gem "faker"
+  gem "database_cleaner-active_record"
+ 
+  # Test doubles for S3 / OpenAI (avoid real API calls in tests)
+  gem "webmock", "~> 3.23"              # Stub HTTP requests (OpenAI, geocoding)
+  gem "aws-sdk-core", "~> 3.0"          # Already a dep — stub_responses: true in tests
 end
-
+ 
 group :development do
-  gem 'listen', '~> 3.3'
-  gem 'spring'
-  gem 'annotate' # Model annotations
-  gem 'bullet' # N+1 query detection
+  gem "listen", "~> 3.3"
+  gem "spring"
+  gem "annotate"                         # Auto-annotate models with schema
+  gem "bullet"                           # N+1 query detection
+ 
+  # Useful additions for this stack
+  gem "rack-mini-profiler"               # Request profiling (catch slow queries)
+  gem "memory_profiler"                  # Memory profiling (image processing can be hungry)
 end
+ 
+group :test do
+  gem "shoulda-matchers", "~> 6.0"      # One-liner model/association matchers
+  gem "timecop", "~> 0.9"               # Freeze time for XP/level/achievement tests
+end
+ 

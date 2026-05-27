@@ -1,3 +1,24 @@
+# config/storage.yml
+#
+# Active Storage configuration.
+# Photos are managed by S3Service directly (not Active Storage attachments),
+# but Active Storage is still used for: avatar uploads, strain images, banner photos, app logo.
+#
+# Credentials are stored in Rails encrypted credentials (config/credentials.yml.enc).
+# Set them with: rails credentials:edit
+#
+# Required credential structure:
+#
+#   aws:
+#     access_key_id: AKIAIOSFODNN7EXAMPLE
+#     secret_access_key: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+#     region: us-east-1
+#     s3_bucket: cannadex-production
+#     s3_bucket_dev: cannadex-development
+#
+#   openai:
+#     api_key: sk-...
+
 test:
   service: Disk
   root: <%= Rails.root.join("tmp/storage") %>
@@ -6,29 +27,31 @@ local:
   service: Disk
   root: <%= Rails.root.join("storage") %>
 
-# Use bin/rails credentials:edit to set the AWS secrets (as aws:access_key_id|secret_access_key)
-# amazon:
-#   service: S3
-#   access_key_id: <%= Rails.application.credentials.dig(:aws, :access_key_id) %>
-#   secret_access_key: <%= Rails.application.credentials.dig(:aws, :secret_access_key) %>
-#   region: us-east-1
-#   bucket: your_own_bucket-<%= Rails.env %>
+# ── Amazon S3 ────────────────────────────────────────────────────────────────
 
-# Remember not to checkin your GCS keyfile to a repository
-# google:
-#   service: GCS
-#   project: your_project
-#   credentials: <%= Rails.root.join("path/to/gcs.keyfile") %>
-#   bucket: your_own_bucket-<%= Rails.env %>
+amazon_dev:
+  service: S3
+  access_key_id:     <%= Rails.application.credentials.dig(:aws, :access_key_id) %>
+  secret_access_key: <%= Rails.application.credentials.dig(:aws, :secret_access_key) %>
+  region:            <%= Rails.application.credentials.dig(:aws, :region) || "us-east-1" %>
+  bucket:            <%= Rails.application.credentials.dig(:aws, :s3_bucket_dev) || "cannadex-development" %>
+  upload:
+    server_side_encryption: "AES256"
 
-# Use bin/rails credentials:edit to set the Azure Storage secret (as azure_storage:storage_access_key)
-# microsoft:
-#   service: AzureStorage
-#   storage_account_name: your_account_name
-#   storage_access_key: <%= Rails.application.credentials.dig(:azure_storage, :storage_access_key) %>
-#   container: your_container_name-<%= Rails.env %>
+amazon_production:
+  service: S3
+  access_key_id:     <%= Rails.application.credentials.dig(:aws, :access_key_id) %>
+  secret_access_key: <%= Rails.application.credentials.dig(:aws, :secret_access_key) %>
+  region:            <%= Rails.application.credentials.dig(:aws, :region) || "us-east-1" %>
+  bucket:            <%= Rails.application.credentials.dig(:aws, :s3_bucket) || "cannadex-production" %>
+  upload:
+    server_side_encryption: "AES256"
+    cache_control: "max-age=31536000"   # 1 year cache for static assets (avatars, strain images)
 
+# ── Mirror (optional) ─────────────────────────────────────────────────────────
+# Uncomment to mirror uploads across two buckets (useful during a bucket migration)
 # mirror:
 #   service: Mirror
-#   primary: local
-#   mirrors: [ amazon, google, microsoft ]
+#   primary: amazon_production
+#   mirrors:
+#     - amazon_backup
